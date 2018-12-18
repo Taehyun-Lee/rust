@@ -1,0 +1,39 @@
+{
+	"llvm-target":"x86_64-wrs-vxworks",
+	"target-endian":"little",
+	"target-pointer-width":"64",
+	"target-c-int-width":"32",
+	"os":"vxworks",
+	"env":"Elf",
+	"vendor":"wrs",
+	"arch":"x86_64",
+	"data-layout":"e-m:e-i64:64",
+	"linker":"/home/tlee1/vx7git/vxworks/compilers/llvm-6.0.0.2/LINUX386/bin/ldpentium",
+	"linker-flavor":"ld",
+	"executables": true ,
+	"disable-redzone": true,
+	"eliminate_frame_pointer" : false,
+	"no_builtins" : true,
+	"pre-link-args": {
+	  "ld": [
+	    "--defsym", "__wrs_rtp_base=0x200000000",
+	    "-T", "/home/tlee1/vx7git/vxworks/workbench-4/workspace/vsb_vxsim_x86_64/usr/ldscripts/rtp.ld",
+	    "/home/tlee1/vx7git/vxworks/workbench-4/workspace/vsb_vxsim_x86_64/usr/lib/common/crt0.o",
+	    "-z", "common-page-size=8192",
+	    "-m", "elf_x86_64",
+	    "-u", "__wr_need_frame_add",
+	    "-u", "__tls__"
+	  ]
+	},
+	"late-link-args": {
+	  "ld": [
+	    "-L/home/tlee1/vx7git/vxworks/workbench-4/workspace/vsb_vxsim_x86_64/usr/lib/common"
+	  ]
+	},
+	"post-link-args": {
+	  "ld": [
+	    "-static", "--start-group", "-lunix", "-lcplusplus", "-lc", "-lsyscall", "-lc_internal", "-lllvm", "-lnet", "-lnet_base", "-lllvmcplus", "-ldl", "/home/tlee1/.xargo/lib/rustlib/x86_64-wrs-vxworks/lib/libstd.rlib", "--end-group"
+	  ]
+	}
+}
+

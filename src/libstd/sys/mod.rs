@@ -48,6 +48,9 @@ cfg_if! {
     } else if #[cfg(target_arch = "wasm32")] {
         mod wasm;
         pub use self::wasm::*;
+    } else if #[cfg(target_os = "vxworks")] {
+	    mod vxworks;
+	    pub use self::vxworks::*;
     } else {
         compile_error!("libstd doesn't compile for this platform yet");
     }

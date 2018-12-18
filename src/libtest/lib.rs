@@ -34,7 +34,7 @@
        html_root_url = "https://doc.rust-lang.org/nightly/", test(attr(deny(warnings))))]
 #![feature(asm)]
 #![feature(fnbox)]
-#![cfg_attr(any(unix, target_os = "cloudabi"), feature(libc))]
+#![cfg_attr(any(unix, target_os = "cloudabi", target_os = "vxworks"), feature(libc))]
 #![feature(nll)]
 #![feature(set_stdio)]
 #![feature(panic_unwind)]
@@ -43,7 +43,7 @@
 #![feature(test)]
 
 extern crate getopts;
-#[cfg(any(unix, target_os = "cloudabi"))]
+#[cfg(any(unix, target_os = "cloudabi", target_os = "vxworks"))]
 extern crate libc;
 extern crate term;
 
@@ -1002,7 +1002,7 @@ fn stdout_isatty() -> bool {
     // FIXME: Implement isatty on Redox
     false
 }
-#[cfg(unix)]
+#[cfg(any(unix, target_os = "vxworks",))]
 fn stdout_isatty() -> bool {
     unsafe { libc::isatty(libc::STDOUT_FILENO) != 0 }
 }
@@ -1218,7 +1218,7 @@ fn get_concurrency() -> usize {
         }
     }
 
-    #[cfg(target_os = "redox")]
+    #[cfg(any(target_os = "redox", target_os = "vxworks"))]
     fn num_cpus() -> usize {
         // FIXME: Implement num_cpus on Redox
         1

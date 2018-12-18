@@ -19,6 +19,7 @@
 #![feature(core_intrinsics)]
 #![feature(nll)]
 #![feature(staged_api)]
+#![feature(libc)]
 #![feature(rustc_attrs)]
 #![cfg_attr(
     all(target_arch = "wasm32", not(target_os = "emscripten")),
@@ -102,7 +103,7 @@ unsafe impl Alloc for System {
     }
 }
 
-#[cfg(any(windows, unix, target_os = "cloudabi", target_os = "redox"))]
+#[cfg(any(windows, unix, target_os = "cloudabi", target_os = "redox", target_os="vxworks"))]
 mod realloc_fallback {
     use core::alloc::{GlobalAlloc, Layout};
     use core::cmp;
@@ -125,7 +126,7 @@ mod realloc_fallback {
     }
 }
 
-#[cfg(any(unix, target_os = "cloudabi", target_os = "redox"))]
+#[cfg(any(unix, target_os = "cloudabi", target_os = "redox", target_os = "vxworks"))]
 mod platform {
     extern crate libc;
 

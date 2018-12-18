@@ -1675,7 +1675,7 @@ mod tests {
     }
 
     #[test]
-    #[cfg(unix)]
+    #[cfg(all(unix, not(target_os = "vxworks")))]
     #[cfg_attr(target_os = "android", ignore)]
     fn signal_reported_right() {
         use os::unix::process::ExitStatusExt;
@@ -1718,6 +1718,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(not(target_os = "vxworks"))]
     #[cfg_attr(any(windows, target_os = "android"), ignore)]
     fn set_current_dir_works() {
         let mut cmd = Command::new("/bin/sh");
@@ -1728,6 +1729,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(not(target_os = "vxworks"))]
     #[cfg_attr(any(windows, target_os = "android"), ignore)]
     fn stdin_works() {
         let mut p = Command::new("/bin/sh")
@@ -1746,7 +1748,7 @@ mod tests {
 
     #[test]
     #[cfg_attr(target_os = "android", ignore)]
-    #[cfg(unix)]
+    #[cfg(all(unix, not(target_os = "vxworks")))]
     fn uid_works() {
         use os::unix::prelude::*;
         use libc;
@@ -1760,7 +1762,7 @@ mod tests {
 
     #[test]
     #[cfg_attr(target_os = "android", ignore)]
-    #[cfg(unix)]
+    #[cfg(all(unix, not(target_os = "vxworks")))]
     fn uid_to_root_fails() {
         use os::unix::prelude::*;
         use libc;
@@ -1814,6 +1816,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(not(target_os = "vxworks"))]
     #[cfg_attr(target_os = "android", ignore)]
     fn test_process_output_error() {
         let Output {status, stdout, stderr}
@@ -1867,8 +1870,8 @@ mod tests {
         assert_eq!(output_str.trim().to_string(), "hello");
         assert_eq!(stderr, Vec::new());
     }
-
-    #[cfg(all(unix, not(target_os="android")))]
+    
+    #[cfg(all(any(unix, target_os="vxworks"), not(target_os="android")))]
     pub fn env_cmd() -> Command {
         Command::new("env")
     }

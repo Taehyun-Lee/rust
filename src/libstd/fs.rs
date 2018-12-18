@@ -2114,7 +2114,7 @@ mod tests {
         }
     ) }
 
-    #[cfg(unix)]
+    #[cfg(any(unix, target_os = "vxworks"))]
     macro_rules! error { ($e:expr, $s:expr) => ( error_contains!($e, $s) ) }
 
     macro_rules! error_contains { ($e:expr, $s:expr) => (
@@ -2131,7 +2131,10 @@ mod tests {
     // have permission, and return otherwise. This way, we still don't run these
     // tests most of the time, but at least we do if the user has the right
     // permissions.
+    #[cfg(not(target_os = "vxworks"))]
     pub fn got_symlink_permission(tmpdir: &TempDir) -> bool {
+        // VxWorks does not support symlinks
+        // if cfg!(target_os = "vxworks") { return false }
         if cfg!(unix) { return true }
         let link = tmpdir.join("some_hopefully_unique_link_name");
 
@@ -2577,6 +2580,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(target_os = "vxworks", ignore)]
     fn concurrent_recursive_mkdir() {
         for _ in 0..100 {
             let dir = tmpdir();
@@ -2613,6 +2617,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(not(target_os = "vxworks"))]
     fn recursive_rmdir() {
         let tmpdir = tmpdir();
         let d1 = tmpdir.join("d1");
@@ -2632,6 +2637,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(not(target_os = "vxworks"))]
     fn recursive_rmdir_of_symlink() {
         // test we do not recursively delete a symlink but only dirs.
         let tmpdir = tmpdir();
@@ -2817,6 +2823,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(not(target_os = "vxworks"))]
     fn symlinks_work() {
         let tmpdir = tmpdir();
         if !got_symlink_permission(&tmpdir) { return };
@@ -2835,6 +2842,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(not(target_os = "vxworks"))]
     fn symlink_noexist() {
         // Symlinks can point to things that don't exist
         let tmpdir = tmpdir();
@@ -2848,6 +2856,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(not(target_os = "vxworks"))]
     fn read_link() {
         if cfg!(windows) {
             // directory symlink
@@ -3009,6 +3018,8 @@ mod tests {
         let invalid_options = 87; // ERROR_INVALID_PARAMETER
         #[cfg(unix)]
         let invalid_options = "Invalid argument";
+        #[cfg(target_os = "vxworks")]
+        let invalid_options = "invalid argument";
 
         // Test various combinations of creation modes and access modes.
         //
@@ -3198,6 +3209,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(not(target_os = "vxworks"))]
     fn realpath_works() {
         let tmpdir = tmpdir();
         if !got_symlink_permission(&tmpdir) { return };
@@ -3223,6 +3235,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(not(target_os = "vxworks"))]
     fn realpath_works_tricky() {
         let tmpdir = tmpdir();
         if !got_symlink_permission(&tmpdir) { return };
@@ -3292,6 +3305,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(not(target_os = "vxworks"))]
     fn create_dir_all_with_junctions() {
         let tmpdir = tmpdir();
         let target = tmpdir.join("target");
