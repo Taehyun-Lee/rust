@@ -1803,6 +1803,16 @@ impl Path {
         if cfg!(target_os = "redox") {
             // FIXME: Allow Redox prefixes
             self.has_root() || has_redox_scheme(self.as_u8_slice())
+        } else if cfg!(target_os = "vxworks"){
+            use libc;
+            use ptr;
+            use ffi::CString;
+            use sys::os::OsStrExt;
+
+            let c_path = CString::new(self.as_os_str().as_bytes()).expect("CString::new failed");
+
+            self.has_root() || 
+            unsafe { libc::_pathIsAbsolute(c_path.as_ptr(), ptr::null()) }
         } else {
             self.has_root() && (cfg!(unix) || self.prefix().is_some())
         }
@@ -3699,7 +3709,7 @@ mod tests {
             });
         );
 
-        if cfg!(unix) {
+        if cfg!(unix) || cfg!(target_os = "vxworks") {
             tp!("", "foo", "foo");
             tp!("foo", "bar", "foo/bar");
             tp!("foo/", "bar", "foo/bar");
@@ -3858,7 +3868,7 @@ mod tests {
         tfn!("foo", "bar", "bar");
         tfn!("foo", "", "");
         tfn!("", "foo", "foo");
-        if cfg!(unix) {
+        if cfg!(unix) || cfg!(target_os = "vxworks") {
             tfn!(".", "foo", "./foo");
             tfn!("foo/", "bar", "bar");
             tfn!("foo/.", "bar", "bar");
