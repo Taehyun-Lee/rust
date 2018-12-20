@@ -580,11 +580,7 @@ pub fn home_dir() -> Option<PathBuf> {
 /// ```
 #[stable(feature = "env", since = "1.0.0")]
 pub fn temp_dir() -> PathBuf {
-    if !cfg!(target_os = "vxworks") {
-        os_imp::temp_dir()
-    } else {
-        PathBuf::from("/yow-build62-lx2/bkuhl/tlee1/mock_tmp")
-    }
+    os_imp::temp_dir()
 }
 
 /// Returns the full filesystem path of the current running executable.

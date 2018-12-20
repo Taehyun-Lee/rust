@@ -1816,7 +1816,6 @@ mod tests {
     }
 
     #[test]
-    #[cfg(not(target_os = "vxworks"))]
     #[cfg_attr(target_os = "android", ignore)]
     fn test_process_output_error() {
         let Output {status, stdout, stderr}

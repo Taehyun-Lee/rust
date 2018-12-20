@@ -298,7 +298,7 @@ pub fn temp_dir() -> PathBuf {
 		if cfg!(target_os = "android") {
 			PathBuf::from("/data/local/tmp")
 		} else {
-			PathBuf::from("/tmp")
+			PathBuf::from("/yow-build62-lx2/bkuhl/tlee1/mock_tmp")
 		}
 	})
 }
