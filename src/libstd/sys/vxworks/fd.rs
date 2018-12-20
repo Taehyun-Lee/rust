@@ -116,6 +116,21 @@ impl FileDesc {
         }
     }
 
+    // refer to pxPipeDrv library documentation. 
+    // VxWorks uses fcntl to set O_NONBLOCK to the pipes
+    pub fn set_nonblocking_pipe(&self, nonblocking: bool) -> io::Result<()> {
+        unsafe {
+            let mut flags = cvt(libc::fcntl(self.fd, libc::F_GETFL, 0))?;
+            flags = if nonblocking {
+                flags | libc::O_NONBLOCK
+            } else {
+                flags & !libc::O_NONBLOCK
+            };
+            cvt(libc::fcntl(self.fd, libc::F_SETFL, flags))?;
+            Ok(())
+        }
+    }
+
 
     pub fn duplicate(&self) -> io::Result<FileDesc> {
         // We want to atomically duplicate this file descriptor and set the

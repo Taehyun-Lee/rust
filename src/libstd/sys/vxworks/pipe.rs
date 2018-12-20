@@ -50,8 +50,8 @@ pub fn read2(p1: AnonPipe,
     // in the `select` loop below, and we wouldn't want one to block the other!
     let p1 = p1.into_fd();
     let p2 = p2.into_fd();
-    p1.set_nonblocking(true)?;
-    p2.set_nonblocking(true)?;
+    p1.set_nonblocking_pipe(true)?;
+    p2.set_nonblocking_pipe(true)?;
 
     let mut fds: [libc::pollfd; 2] = unsafe { mem::zeroed() };
     fds[0].fd = p1.raw();
@@ -63,11 +63,11 @@ pub fn read2(p1: AnonPipe,
         cvt_r(|| unsafe { libc::poll(fds.as_mut_ptr(), 2, -1) })?;
 
         if fds[0].revents != 0 && read(&p1, v1)? {
-            p2.set_nonblocking(false)?;
+            p2.set_nonblocking_pipe(false)?;
             return p2.read_to_end(v2).map(|_| ());
         }
         if fds[1].revents != 0 && read(&p2, v2)? {
-            p1.set_nonblocking(false)?;
+            p1.set_nonblocking_pipe(false)?;
             return p1.read_to_end(v1).map(|_| ());
         }
     }
